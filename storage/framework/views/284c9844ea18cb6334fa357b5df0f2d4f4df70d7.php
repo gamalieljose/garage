@@ -1,0 +1,129 @@
+
+<?php $__env->startSection('content'); ?>
+
+<!-- page content start-->
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="nav_menu">
+          <nav>
+            <div class="nav toggle">
+              <a id="menu_toggle"><i class="fa fa-bars"></i><span class="titleup">&nbsp <?php echo e(trans('app.Account Tax')); ?></span></a>
+            </div>
+            <?php echo $__env->make('dashboard.profile', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+          </nav>
+        </div>
+      </div>
+      
+      <?php if(session('message')): ?>
+      <div class="row massage">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="checkbox checkbox-success checkbox-circle">       
+            <?php if(session('message') == 'Successfully Submitted'): ?>
+              <label for="checkbox-10 colo_success"> <?php echo e(trans('app.Successfully Submitted')); ?>  </label>
+               <?php elseif(session('message')=='Successfully Updated'): ?>
+               <label for="checkbox-10 colo_success"> <?php echo e(trans('app.Successfully Updated')); ?>  </label>
+               <?php elseif(session('message')=='Successfully Deleted'): ?>
+               <label for="checkbox-10 colo_success"> <?php echo e(trans('app.Successfully Deleted')); ?>  </label>
+            <?php endif; ?>
+          </div>
+        </div>
+      </div>
+      <?php endif; ?>
+      
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_content">
+            <ul class="nav nav-tabs bar_tabs tabconatent" role="tablist">
+              <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('taxrate_view')): ?>
+                <li role="presentation" class="active"><a href="<?php echo url('/taxrates/list'); ?>"><span class="visible-xs"></span> <i class="fa fa-list fa-lg">&nbsp;</i> <b><?php echo e(trans('app.List Account Tax')); ?></b></a></li>
+              <?php endif; ?>
+              <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('taxrate_add')): ?>
+                <li role="presentation" class="setMarginForAddAccountTaxForSmallDevices"><a href="<?php echo url('/taxrates/add'); ?>"><span class="visible-xs"></span> <i class="fa fa-plus-circle fa-lg">&nbsp;</i><?php echo e(trans('app.Add Account Tax')); ?></a></li>
+              <?php endif; ?>
+            </ul>
+          </div>
+        <div class="x_panel">
+        <table id="datatable" class="table table-striped jambo_table" style="margin-top:20px;">
+          <thead>
+            <tr>
+              <th>#</th>             
+              <th><?php echo e(trans('app.Account Tax Name')); ?>
+
+              <th><?php echo e(trans('app.Tax Rates')); ?>(%)</th>
+
+              <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['taxrate_edit','taxrate_delete'])): ?>
+                <th><?php echo e(trans('app.Action')); ?></th>
+              <?php endif; ?>
+
+            </tr>
+          </thead>
+          <tbody>
+            <?php $i=1;?>
+            <?php $__currentLoopData = $account; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $accounts): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <tr>
+                <td><?php echo e($i); ?></td>
+                <td><?php echo e($accounts->taxname); ?></td>
+                <td><?php echo e($accounts ->tax); ?></td>
+
+                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['taxrate_edit','taxrate_delete'])): ?>
+                  <td> 
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('taxrate_edit')): ?>
+                      <a href="<?php echo url ('/taxrates/list/edit/'.$accounts->id); ?>"> <button type="button" class="btn btn-round btn-success"><?php echo e(trans('app.Edit')); ?></button></a>
+                    <?php endif; ?>
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('taxrate_delete')): ?>           
+                      <a url="<?php echo url('/taxrates/list/delete/'.$accounts->id); ?>" class="sa-warning"> <button type="button" class="btn btn-round btn-danger dgr"><?php echo e(trans('app.Delete')); ?></button></a>
+                    <?php endif; ?>
+                  </td>
+                <?php endif; ?>
+              </tr>
+              <?php $i++; ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+          </tbody>
+        </table>
+      </div>
+    </div>       
+    </div>
+  </div>
+  </div>
+<!-- page content end-->
+  
+<script src="<?php echo e(URL::asset('vendors/jquery/dist/jquery.min.js')); ?>"></script>
+<!-- language change in user selected -->	
+<script>
+$(document).ready(function() {
+    $('#datatable').DataTable( {
+		responsive: true,
+    sDom: "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
+        "language": {
+			
+				"url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/<?php echo getLanguageChange(); 
+			?>.json"
+        }
+    } );
+} );
+</script>  
+<!-- delete taxrates -->
+<script>
+ $('body').on('click', '.sa-warning', function() {
+  
+    var url =$(this).attr('url');
+    
+    
+        swal({   
+            title: "Are You Sure?",
+      text: "You will not be able to recover this data afterwards!",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#297FCA",   
+            confirmButtonText: "Yes, delete!",   
+            closeOnConfirm: false 
+        }, function(){
+      window.location.href = url;
+             
+        });
+    }); 
+ 
+</script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\garage\resources\views//taxrates/list.blade.php ENDPATH**/ ?>
